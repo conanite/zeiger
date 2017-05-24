@@ -18,9 +18,10 @@ module Zeiger
     end
 
     def build_index
+      started = Time.now
       files = Set.new
       includes.each do |inc|
-        Dir.glob(File.join(dir, inc, "**", "*")).each do |file|
+        Dir.glob(File.join(dir, inc, "**", "*")).sort.each do |file|
           if File.file?(file) && !ignore?(file)
             files << file
             mtime = File.stat(file).mtime
@@ -34,6 +35,8 @@ module Zeiger
         end
       end
       (Set.new(stat.keys) - files).each { |f| index.remove_from_index f }
+      finished = Time.now
+      puts "#build_index: #{(finished - started)}msec"
     end
   end
 end

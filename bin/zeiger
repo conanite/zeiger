@@ -7,55 +7,9 @@ SOCKET_NAME = "./zeiger-index"
 
 command = $*[0]
 
-class Server
-  def self.run
-    dir = File.expand_path(".")
-    z = Zeiger::Index.new dir
-
-    Thread.new do
-      begin
-        puts "monitor thread"
-        monitor = Zeiger::Monitor.new dir, z
-        puts "created monitor"
-        while true do
-          puts "scanning..."
-          monitor.build_index
-          sleep 10
-        end
-      rescue Exception => e
-        puts e.message
-        puts e.backtrace
-      end
-    end
-
-    puts "query thread..."
-
-    Socket.unix_server_loop(SOCKET_NAME) { |sock, client|
-      puts "query thread: server loop"
-      begin
-        z.query(sock.readline.strip).each { |res| sock.puts res.to_s }
-      ensure
-        sock.close
-      end
-    }
-  end
-end
-
-class Client
-  def self.run q
-    Socket.unix(SOCKET_NAME) { |sock|
-      sock.puts(q)
-      sleep(1)
-      while !sock.eof?
-        puts sock.readline
-      end
-    }
-  end
-end
-
 case command
-when "server" ; Server.run
-when "search" ; Client.run($*[1])
+when "server" ; Zeiger::Server.run *$*
+when "search" ; Zeiger::Client.run *$*
 end
 
 # define file groups
