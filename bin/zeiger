@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+
+require 'socket'
+require 'zeiger'
+
+SOCKET_NAME = "./zeiger-index"
+
+command = $*[0]
+
+puts "command is #{command.inspect}"
+
+class Server
+  def self.run
+    z = Zeiger::Index.new "."
+
+    Socket.unix_server_loop(SOCKET_NAME) { |sock, client|
+      begin
+        z.query(sock.readline.strip).each { |res| sock.puts res.to_s }
+        sock.puts "DONE"
+      ensure
+        sock.close
+      end
+    }
+  end
+end
+
+class Client
+  def self.run q
+    puts "query is #{q.inspect}"
+    Socket.unix(SOCKET_NAME) { |sock|
+      sock.puts(q)
+      sleep(1)
+      while !sock.eof?
+        puts sock.readline
+      end
+    }
+  end
+end
+
+case command
+when "server" ; Server.run
+when "search" ; Client.run($*[1])
+end
+
+# define file groups
+
+# file_group :app, patterns: [/^app/ ]
+# file_group :helpers, patterns: [/^app\/helpers/ ]
+# file_group :spec, patterns: [/^spec/ ]
+# file_group :sass, patterns: [/\.sass$/ ]
+# file_group :all, groups: %w{app spec sass}
+
+
+# writing to socket: nc -U /tmp/uss
