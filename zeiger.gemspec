@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Zeiger::VERSION
   spec.authors       = ["conanite"]
   spec.email         = ["conan@conandalton.net"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Provide text index of files in current directory tree and a unix socket to query on}
+  spec.description   = %q{Maintain an in-memory text index of files in current directory tree, allow querying via unix socket in current directory }
   spec.homepage      = ""
   spec.license       = "MIT"
 

@@ -12,3 +12,8 @@
 *.o
 *.a
 mkmf.log
+*.gem
+test/tmp
+test/version_tmp
+tmp
+.#*

@@ -1,0 +1,9 @@
+search:
+  - bin
+  - lib
+ignore:
+  - .gz$
+  - .png$
+  - .gif$
+  - .zip$
+  - .jpg$

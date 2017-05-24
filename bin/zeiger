@@ -7,16 +7,33 @@ SOCKET_NAME = "./zeiger-index"
 
 command = $*[0]
 
-puts "command is #{command.inspect}"
-
 class Server
   def self.run
-    z = Zeiger::Index.new "."
+    dir = File.expand_path(".")
+    z = Zeiger::Index.new dir
+
+    Thread.new do
+      begin
+        puts "monitor thread"
+        monitor = Zeiger::Monitor.new dir, z
+        puts "created monitor"
+        while true do
+          puts "scanning..."
+          monitor.build_index
+          sleep 10
+        end
+      rescue Exception => e
+        puts e.message
+        puts e.backtrace
+      end
+    end
+
+    puts "query thread..."
 
     Socket.unix_server_loop(SOCKET_NAME) { |sock, client|
+      puts "query thread: server loop"
       begin
         z.query(sock.readline.strip).each { |res| sock.puts res.to_s }
-        sock.puts "DONE"
       ensure
         sock.close
       end
@@ -26,7 +43,6 @@ end
 
 class Client
   def self.run q
-    puts "query is #{q.inspect}"
     Socket.unix(SOCKET_NAME) { |sock|
       sock.puts(q)
       sleep(1)
