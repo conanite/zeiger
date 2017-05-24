@@ -1,18 +1,14 @@
 module Zeiger
   class Line
-    attr_accessor :dir, :file, :line_number, :content
+    attr_accessor :file, :line_number, :content
     attr_reader :hash
 
-    def initialize dir, file, line_number, content
-      @dir, @file, @line_number, @content = dir, file, line_number, content
-      @hash = "#{file}##{line_number}".hash
+    def initialize file, line_number, content
+      @file, @line_number, @content = file, line_number, content
+      @hash = "#{file.filename}##{line_number}".hash
     end
 
-    def filename fn
-      fn.gsub(/^#{Regexp.escape dir}\//, "")
-    end
-
-    def to_s            ; "#{filename(file)}:#{line_number}:#{content}"                    ; end
+    def to_s            ; "#{file.local_filename}:#{line_number}:#{content}"               ; end
     def matches? regex  ; content.match regex                                              ; end
     def ngram_list size ; @ngrams ||= content.ngrams(size)                                 ; end
     def ngrams    size  ; ngram_list(size).each { |ngram| yield ngram, self }              ; end

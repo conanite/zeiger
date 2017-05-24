@@ -9,7 +9,8 @@ command = $*[0]
 
 case command
 when "server" ; Zeiger::Server.run *$*
-when "search" ; Zeiger::Client.run *$*
+when "search" ; Zeiger::QueryClient.run *$*
+when "files"  ; Zeiger::FileListClient.run *$*
 end
 
 # define file groups

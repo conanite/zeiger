@@ -1,9 +1,8 @@
 module Zeiger
-  class Client
-    def self.run command, q, *args
+  class FileListClient
+    def self.run command, q=nil, *args
       Socket.unix(SOCKET_NAME) { |sock|
-        sock.puts(q)
-        sleep(1)
+        sock.puts("FILES: #{q}")
         while !sock.eof?
           puts sock.readline
         end

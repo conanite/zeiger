@@ -25,7 +25,13 @@ module Zeiger
       Socket.unix_server_loop(SOCKET_NAME) { |sock, client|
         puts "query thread: server loop"
         begin
-          z.query(sock.readline.strip).each { |res| sock.puts res.to_s }
+          incoming = sock.readline.strip.split(/:/, 2).map &:strip
+          case incoming[0]
+          when "SEARCH"
+            z.query(incoming[1]).each { |res| sock.puts res.to_s }
+          when "FILES"
+            z.file_list(incoming[1]).each { |f| sock.puts f.local_filename }
+          end
         ensure
           sock.close
         end

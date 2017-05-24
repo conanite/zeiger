@@ -21,11 +21,10 @@ module Zeiger
     end
 
     def add_to_index file
-      info = FileInfo.new file
-      files[file] = info
+      info = files[file] = FileInfo.new(dir, file)
 
       File.read(file).split(/\n/).each_with_index { |txt, line|
-        Line.new(dir, file, line + 1, txt).ngrams(NGRAM_SIZE) do |trig, line|
+        Line.new(info, line + 1, txt).ngrams(NGRAM_SIZE) do |trig, line|
           index[trig] << line
           info.add_ngram trig
         end
@@ -40,6 +39,12 @@ module Zeiger
     def query txt
       puts "got query #{txt.inspect}"
       exec_query Regexp.compile(txt), txt.ngrams(NGRAM_SIZE)
+    end
+
+    def file_list name
+      r = Regexp.compile name
+      puts "file names matching #{r.inspect}"
+      files.values.select { |f| f.match r }
     end
   end
 end
