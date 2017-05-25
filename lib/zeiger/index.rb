@@ -15,9 +15,10 @@ module Zeiger
       info = files[file]
       if info
         info.ngrams.each { |ngram|
-          index[ngram].reject! { |line| line.file == file }
+          index[ngram].reject! { |line| line.file == info }
         }
       end
+      files.delete file
     end
 
     def add_to_index file
@@ -29,7 +30,6 @@ module Zeiger
           info.add_ngram trig
         end
       }
-      puts "#{index.length} trigrams"
     end
 
     def exec_query regex, ngrams
