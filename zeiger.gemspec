@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["conan@conandalton.net"]
   spec.summary       = %q{Provide text index of files in current directory tree and a unix socket to query on}
   spec.description   = %q{Maintain an in-memory text index of files in current directory tree, allow querying via unix socket in current directory }
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/conanite/zeiger"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
