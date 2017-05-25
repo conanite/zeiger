@@ -36,7 +36,9 @@ module Zeiger
       end
       (Set.new(stat.keys) - files).each { |f| index.remove_from_index f }
       finished = Time.now
-      puts "#build_index: #{(finished - started)}msec"
+      puts "ngrams       : #{index.index.length}"
+      puts "files        : #{index.files.length}"
+      puts "#build_index : #{(finished - started)} sec"
     end
   end
 end
