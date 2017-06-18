@@ -4,9 +4,19 @@ module Zeiger
 
     def initialize dir, index
       @dir, @index, @stat = dir, index, Hash.new
-      attrs = File.exist?(".zeiger.yml") ? YAML.load(File.read ".zeiger.yml") : { }
-      @includes = attrs["includes"] || %w{ app bin config lib spec test }
-      @ignore   = attrs["ignore"]   || %w{ .gz$ .png$ .jpg$ .pdf$ }
+      attrs = load_config
+      @includes = attrs["search"] || %w{ app/**/* bin/**/* config/**/* lib/**/* spec/**/* test/**/* }
+      @ignore   = attrs["ignore"] || %w{ .gz$ .png$ .jpg$ .pdf$ }
+    end
+
+    def load_config
+      conf_file = File.join dir, ".zeiger.yml"
+      if File.exist?(conf_file)
+        puts "reading config from #{conf_file.inspect}"
+        YAML.load(File.read conf_file)
+      else
+        { }
+      end
     end
 
     def ignore? filename
@@ -21,7 +31,7 @@ module Zeiger
       started = Time.now
       files = Set.new
       includes.each do |inc|
-        Dir.glob(File.join(dir, inc, "**", "*")).sort.each do |file|
+        Dir.glob(File.join(dir, inc)).sort.each do |file|
           if File.file?(file) && !ignore?(file)
             files << file
             mtime = File.stat(file).mtime

@@ -9,7 +9,7 @@ module Zeiger
     end
 
     def local_filename
-      filename.gsub(/^#{Regexp.escape dir}\//, "")
+      @_local_filename ||= filename.gsub(/^#{Regexp.escape dir}\//, "")
     end
 
     def match regex

@@ -2,7 +2,10 @@ module Zeiger
   class FileListClient
     def self.run command, q=nil, *args
       Socket.unix(SOCKET_NAME) { |sock|
-        sock.puts("FILES: #{q}")
+        s = YAML.dump({ files: q })
+        sock.write([s.bytesize].pack("I"))
+        sock.write(s)
+
         while !sock.eof?
           puts sock.readline
         end

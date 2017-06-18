@@ -33,18 +33,22 @@ module Zeiger
     end
 
     def exec_query regex, ngrams
-      ngrams.map { |ngram| index[ngram] }.reduce(&:&).select { |line| line.matches? regex }
+      ngrams.map { |ngram| result = index[ngram] || [] }.reduce(&:&).select { |line| line.matches? regex }
     end
 
     def query txt
       puts "got query #{txt.inspect}"
-      exec_query Regexp.compile(txt), txt.ngrams(NGRAM_SIZE)
+      exec_query Regexp.compile(Regexp.escape txt), txt.ngrams(NGRAM_SIZE)
     end
 
     def file_list name
-      r = Regexp.compile name
-      puts "file names matching #{r.inspect}"
-      files.values.select { |f| f.match r }
+      if name
+        r = Regexp.compile name
+        puts "file names matching #{r.inspect}"
+        files.values.select { |f| f.match r }
+      else
+        files.values
+      end.sort_by { |f| f.local_filename }
     end
   end
 end

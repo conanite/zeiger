@@ -2,7 +2,10 @@ module Zeiger
   class QueryClient
     def self.run command, q, *args
       Socket.unix(SOCKET_NAME) { |sock|
-        sock.puts("SEARCH: #{q}")
+        s = YAML.dump({ search: q })
+        sock.write([s.bytesize].pack("I"))
+        sock.write(s)
+
         while !sock.eof?
           puts sock.readline
         end

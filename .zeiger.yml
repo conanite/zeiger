@@ -1,6 +1,6 @@
 search:
-  - bin
-  - lib
+  - "bin/**/*"
+  - "lib/**/*"
 ignore:
   - .gz$
   - .png$
