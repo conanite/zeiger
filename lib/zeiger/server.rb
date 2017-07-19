@@ -1,18 +1,18 @@
 require 'yaml'
-module Zeiger
-  class Server
-    def self.run command, *args
-      dir   = File.expand_path(".")
-      z     = Zeiger::Index.new dir
-      ready = false
 
+module Zeiger
+  SOCKET_NAME = "/tmp/zeiger-index"
+
+  class Server
+    def run command, *args
       Thread.new do
         begin
-          monitor = Zeiger::Monitor.new dir, z
           while true do
-            puts "scanning..."
-            monitor.build_index
-            ready = true
+            indices = Zeiger::INDICES.values
+            indices.each do |index|
+              puts "scanning #{index.dir}"
+              index.rescan
+            end
             sleep 10
           end
         rescue Exception => e
@@ -29,12 +29,13 @@ module Zeiger
           incoming = YAML.load(query)
           puts incoming.to_yaml
 
+          index = Index.from_path incoming[:pwd]
+          puts "querying index at #{index.dir}"
+
           if incoming[:search]
-            z.query(incoming[:search]).each { |res| sock.puts res.to_s }
+            index.query(incoming[:search]).each { |res| sock.puts res.to_s }
           elsif incoming.key? :files
-            z.file_list(incoming[:files]).each { |f| sock.puts f.local_filename }
-          elsif incoming.key? :ready
-            sock.puts ready.inspect
+            index.file_list(incoming[:files]).each { |f| sock.puts f.local_filename }
           end
 
         ensure

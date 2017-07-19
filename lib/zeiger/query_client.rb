@@ -1,8 +1,8 @@
 module Zeiger
   class QueryClient
-    def self.run command, q, *args
+    def self.run pwd, command, q, *args
       Socket.unix(SOCKET_NAME) { |sock|
-        s = YAML.dump({ search: q })
+        s = YAML.dump({ pwd: pwd, search: q })
         sock.write([s.bytesize].pack("I"))
         sock.write(s)
 

@@ -1,8 +1,8 @@
 module Zeiger
   class FileListClient
-    def self.run command, q=nil, *args
+    def self.run pwd, command, q=nil, *args
       Socket.unix(SOCKET_NAME) { |sock|
-        s = YAML.dump({ files: q })
+        s = YAML.dump({ pwd: pwd, files: q })
         sock.write([s.bytesize].pack("I"))
         sock.write(s)
 

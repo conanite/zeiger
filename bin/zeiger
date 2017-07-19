@@ -3,14 +3,13 @@
 require 'socket'
 require 'zeiger'
 
-SOCKET_NAME = "./zeiger-index"
-
+pwd     = `pwd`.strip
 command = $*[0]
 
 case command
-when "server" ; Zeiger::Server.run *$*
-when "search" ; Zeiger::QueryClient.run *$*
-when "files"  ; Zeiger::FileListClient.run *$*
+when "server" ; Zeiger::Server.new.run *$*
+when "search" ; Zeiger::QueryClient.run pwd, *$*
+when "files"  ; Zeiger::FileListClient.run pwd, *$*
 end
 
 # define file groups
