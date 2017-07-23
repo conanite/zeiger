@@ -29,13 +29,13 @@ Zeiger will rescan files in the current directory every ten seconds so the index
 
 ## Usage
 
-`zeiger server` runs the server and opens a unix filesystem socket called `zeiger-index` in the current directory.
+`zeiger server` runs the server and opens a unix filesystem socket called `/tmp/zeiger-index`
 
 `zeiger search "foo"` writes the query to the socket and displays the result
 
 `zeiger files "xed"` asks for the list of filenames corresponding to the argument ("xed"). With no argument, return all filenames. Files are sorted by length of filename. This sounds odd, but works nicely with 'completing-read in emacs: you will find the file you want in fewer keystrokes.
 
-By default, Zeiger searches only in these subdirectories : %w{ app bin config lib spec test }, and excludes filenames matching these patterns: %w{ .gz$ .png$ .jpg$ .pdf$ }.
+By default, Zeiger searches only in these subdirectories : `%w{ app bin config lib spec test }`, and excludes filenames matching these patterns: `%w{ .gz$ .png$ .jpg$ .pdf$ }`.
 
 To override, create a file called `.zeiger.yml` in your project root with the following format:
 
