@@ -1,30 +1,31 @@
 # Zeiger
 
-Zeiger is the German word for "pointer", "indicator", "index", "locator". This gem is built in the "index" sense : run
+Zeiger is the German word for "pointer", "indicator", "index", "locator". This gem is built in the "index" sense. To install,
 
 ```
-cd myproject
+gem install zeiger
+```
+
+In a terminal, run
+
+```
 zeiger server
 ```
 
-and this gem will create an in-memory index of all text in the filesystem subtree rooted in the current directory.
-
-Query the index thus:
+Zeiger will open a unix-socket under `/tmp` and listen for search and file-list requests. Run this in a terminal:
 
 ```
 cd myproject
 zeiger search "muppets"
 ```
 
-This example returns one line for each line in your projects containing the word "muppets". Output is in the same format as `grep` (so you can hook it up with your emacs for quick project browsing).
+(Replace "myproject" with something meaningful!)
 
-## Installation
+Zeiger will index the current directory if it is not already indexed, then search for lines containing "muppets". Output is in the same format as `grep` (so you can hook it up with your emacs for quick project browsing).
 
-```
-gem install 'zeiger'
-```
+Zeiger will rescan files in the current directory every ten seconds so the index is mostly up-to-date.
 
-This is built as a standalone commandline tool ; I don't have any use-cases for integrating it directly into a larger project. But if you do, I'm all ears.
+
 
 ## Usage
 
@@ -32,11 +33,11 @@ This is built as a standalone commandline tool ; I don't have any use-cases for 
 
 `zeiger search "foo"` writes the query to the socket and displays the result
 
-`zeiger files "xed"` asks for the list of filenames corresponding to the argument ("xed"). With no argument, return all filenames.
+`zeiger files "xed"` asks for the list of filenames corresponding to the argument ("xed"). With no argument, return all filenames. Files are sorted by length of filename. This sounds odd, but works nicely with 'completing-read in emacs: you will find the file you want in fewer keystrokes.
 
 By default, Zeiger searches only in these subdirectories : %w{ app bin config lib spec test }, and excludes filenames matching these patterns: %w{ .gz$ .png$ .jpg$ .pdf$ }.
 
-To override, create a file in your working directory with the following format:
+To override, create a file called `.zeiger.yml` in your project root with the following format:
 
 ```yaml
 search:
@@ -52,6 +53,12 @@ ignore:
   - .xcf$
   - .mpg$
 ```
+
+You should change the contents to suit your indexing needs. The `search` key is a list of regexps, zeiger will index only those files whose name matches at least one of these regexps. The `ignore` key is likewise a list of regexps, zeiger will not index any file whose name matches any of these regexps. The `ignore` rule supercedes the `search` rule.
+
+When you invoke `zeiger search ...` or `zeiger files ...`, zeiger will consider whether an index already exists for the current directory. If not, and the current directory is a project root, it will create an index for the current directory. If there is no index, and the current directory is not a project root, it moves up one directory and tries again.
+
+Zeiger considers a project root any directory containing any one of the following: `%w{ .zeiger.yml .git .hg Makefile Rakefile Gemfile build.xml }` (see `ROOT_FILES` constant in `index.rb`)
 
 
 ## Contributing
