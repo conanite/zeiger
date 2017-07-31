@@ -1,9 +1,30 @@
 search:
+  - "app/**/*"
   - "bin/**/*"
   - "lib/**/*"
 ignore:
-  - .gz$
-  - .png$
-  - .gif$
-  - .zip$
-  - .jpg$
+  - "\\.gz$"
+  - "\\.png$"
+  - "\\.gif$"
+  - "\\.zip$"
+  - "\\.jpg$"
+stats:
+  code:
+    - "bin/.*"
+    - "lib/.*\\.rb$"
+  test:
+    - "spec/.*"
+    - "test/.*"
+  other:
+    - ".*\\.yml$"
+comments:
+  "\\.yml$":
+    - "^\\s*#"
+  "\\.rb$":
+    - "^\\s*#"
+  "\\.nydp$":
+    - "^\\s*;"
+  "\\.arc$":
+    - "^\\s*;"
+  "\\.c$":
+    - "^\\s*//"

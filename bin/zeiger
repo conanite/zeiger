@@ -10,6 +10,7 @@ case command
 when "server" ; Zeiger::Server.new.run *$*
 when "search" ; Zeiger::QueryClient.run pwd, *$*
 when "files"  ; Zeiger::FileListClient.run pwd, *$*
+when "stats"  ; Zeiger::StatsClient.run pwd, *$*
 end
 
 # define file groups

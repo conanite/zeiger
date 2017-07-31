@@ -34,6 +34,8 @@ module Zeiger
 
           if incoming[:search]
             index.query(incoming[:search]).each { |res| sock.puts res.to_s }
+          elsif incoming.key? :stats
+            sock.puts index.stats.stats.to_yaml
           elsif incoming.key? :files
             index.file_list(incoming[:files]).each { |f| sock.puts f.local_filename }
           end

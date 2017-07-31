@@ -5,15 +5,27 @@ module Zeiger
     ROOT_FILES = %w{ .zeiger.yml .git .hg Makefile Rakefile Gemfile build.xml }
     NGRAM_SIZE = 3
 
-    attr_accessor :index, :dir, :includes, :ignore, :files, :monitor
+    attr_accessor :index, :dir, :includes, :ignore, :files, :config, :monitor, :stats
 
     def initialize dir
       attrs = File.exist?(".zeiger.yml") ? YAML.load(File.read ".zeiger.yml") : { }
       self.dir      = File.expand_path dir
+      self.config   = load_config
       self.index    = Hash.new { |h, k| h[k] = [] }
       self.files    = Hash.new
-      self.monitor  = Monitor.new dir, self
+      self.monitor  = Monitor.new dir, self, config
+      self.stats    = Stats.new self, config
       rescan
+    end
+
+    def load_config
+      conf_file = File.join dir, ".zeiger.yml"
+      if File.exist?(conf_file)
+        puts "reading config from #{conf_file.inspect}"
+        YAML.load(File.read conf_file)
+      else
+        { }
+      end
     end
 
     def self.from_path path
@@ -35,20 +47,23 @@ module Zeiger
     end
 
     def add_to_index file
-      info = files[file] = FileInfo.new(dir, file)
+      info = files[file] = FileInfo.new(dir, file, stats)
 
       File.read(file).split(/\n/).each_with_index { |txt, line|
-        Line.new(info, line + 1, txt).ngrams(NGRAM_SIZE) do |trig, line|
+        line = Line.new(info, line + 1, txt).ngrams(NGRAM_SIZE) do |trig, line|
           index[trig] << line
           info.add_ngram trig
         end
       }
+
+      puts "re-index : #{info.stats_group}\t#{info.nc_nb_line_count}/#{info.lines.count}\t: #{info.filename}"
     end
 
-    def rescan                   ; monitor.build_index                                            ; end
-    def get_ngram_lines   ngrams ; ngrams.map { |ngram| result = index[ngram] || [] }.reduce(&:&) ; end
-    def exec_query regex, ngrams ; get_ngram_lines(ngrams).select { |line| line.matches? regex }  ; end
-    def sort_by_filename   lines ; lines.sort_by { |line| line.file.local_filename }              ; end
+    def glob             pattern ; Dir.glob(File.join(dir, pattern))                                     ; end
+    def rescan                   ; monitor.build_index                                                   ; end
+    def get_ngram_lines   ngrams ; ngrams.map { |ngram| result = index[ngram] || [] }.reduce(&:&)        ; end
+    def exec_query regex, ngrams ; get_ngram_lines(ngrams).select { |line| line.matches? regex }         ; end
+    def sort_by_filename   lines ; lines.sort_by { |line| [line.file.local_filename, line.line_number] } ; end
 
     def query txt
       puts "got query #{txt.inspect}"

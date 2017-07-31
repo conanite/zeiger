@@ -2,10 +2,13 @@ require 'set'
 
 module Zeiger
   class FileInfo
-    attr_accessor :dir, :filename, :ngrams
+    attr_accessor :dir, :filename, :ngrams, :lines, :stats_group, :comment_regexes, :nc_nb_line_count
 
-    def initialize dir, filename
-      @dir, @filename, @ngrams = dir, filename, Set.new
+    def initialize dir, filename, stats
+      @dir, @filename, @ngrams, @lines = dir, filename, Set.new, []
+      @stats_group      = stats.stats_group filename
+      @comment_regexes  = stats.comment_rules(filename)
+      @nc_nb_line_count = 0
     end
 
     def local_filename
@@ -18,6 +21,11 @@ module Zeiger
 
     def add_ngram ngram
       @ngrams << ngram
+    end
+
+    def add_line line
+      lines << line
+      @nc_nb_line_count += 1 unless line.blank? || (comment_regexes.any? { |regex| line.matches? regex })
     end
   end
 end
