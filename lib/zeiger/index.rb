@@ -5,11 +5,12 @@ module Zeiger
     ROOT_FILES = %w{ .zeiger.yml .git .hg Makefile Rakefile Gemfile build.xml }
     NGRAM_SIZE = 3
 
-    attr_accessor :index, :dir, :includes, :ignore, :files, :config, :monitor, :stats
+    attr_accessor :index, :dir, :name, :includes, :ignore, :files, :config, :monitor, :stats
 
     def initialize dir
       attrs = File.exist?(".zeiger.yml") ? YAML.load(File.read ".zeiger.yml") : { }
       self.dir      = File.expand_path dir
+      self.name     = File.basename self.dir
       self.config   = load_config
       self.index    = Hash.new { |h, k| h[k] = [] }
       self.files    = Hash.new
@@ -47,7 +48,7 @@ module Zeiger
     end
 
     def add_to_index file
-      info = files[file] = FileInfo.new(dir, file, stats)
+      info = files[file] = FileInfo.new(self, file, stats)
 
       File.read(file).split(/\n/).each_with_index { |txt, line|
         line = Line.new(info, line + 1, txt).ngrams(NGRAM_SIZE) do |trig, line|
@@ -56,7 +57,7 @@ module Zeiger
         end
       }
 
-      puts "re-index : #{info.stats_group}\t#{info.nc_nb_line_count}/#{info.lines.count}\t: #{info.filename}"
+      puts "#{info.summary} : re-index"
     end
 
     def glob             pattern ; Dir.glob(File.join(dir, pattern))                                     ; end

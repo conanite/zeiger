@@ -10,7 +10,7 @@ module Zeiger
           while true do
             indices = Zeiger::INDICES.values
             indices.each do |index|
-              puts "scanning #{index.dir}"
+              puts "scanning #{index.name} at #{index.dir}"
               index.rescan
             end
             sleep 10
@@ -29,7 +29,7 @@ module Zeiger
           puts incoming.to_yaml
 
           index = Index.from_path incoming[:pwd]
-          puts "querying index at #{index.dir}"
+          puts "querying index #{index.name}"
 
           case incoming[:command]
           when :search

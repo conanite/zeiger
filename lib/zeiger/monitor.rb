@@ -32,7 +32,13 @@ module Zeiger
           end
         end
       end
-      (Set.new(stat.keys) - files).each { |f| index.remove_from_index f }
+      (Set.new(stat.keys) - files).each { |f|
+        info = index.files[f]
+        index.remove_from_index f
+        stat.delete f
+        help = info ? info.summary : "[#{index.name}] #{f}"
+        puts "#{help} : deleted"
+      }
       finished = Time.now
       puts "ngrams       : #{index.index.length}"
       puts "files        : #{index.files.length}"

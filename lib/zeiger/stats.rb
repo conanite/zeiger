@@ -15,7 +15,7 @@ module Zeiger
     end
 
     def stats_group filename
-      group_cfg.each { |group, regexes| return group if regexes.any? { |r| filename.match r } }
+      (group_cfg || []).each { |group, regexes| return group if regexes.any? { |r| filename.match r } }
       "undefined"
     end
 
