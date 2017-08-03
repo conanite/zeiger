@@ -1,8 +1,8 @@
 module Zeiger
-  class StatsClient
-    def self.run pwd, command, q=nil, *args
+  class Client
+    def send data
       Socket.unix(SOCKET_NAME) { |sock|
-        s = YAML.dump({ pwd: pwd, stats: true })
+        s = YAML.dump(data)
         sock.write([s.bytesize].pack("I"))
         sock.write(s)
 

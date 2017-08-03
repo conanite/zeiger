@@ -22,7 +22,6 @@ module Zeiger
       end
 
       Socket.unix_server_loop(SOCKET_NAME) { |sock, client|
-        puts "query thread: server loop"
         begin
           length   = sock.read(4).unpack("I")[0]
           query    = sock.read(length)
@@ -32,11 +31,12 @@ module Zeiger
           index = Index.from_path incoming[:pwd]
           puts "querying index at #{index.dir}"
 
-          if incoming[:search]
+          case incoming[:command]
+          when :search
             index.query(incoming[:search]).each { |res| sock.puts res.to_s }
-          elsif incoming.key? :stats
+          when :stats
             sock.puts index.stats.stats.to_yaml
-          elsif incoming.key? :files
+          when :files
             index.file_list(incoming[:files]).each { |f| sock.puts f.local_filename }
           end
 

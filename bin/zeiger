@@ -5,12 +5,13 @@ require 'zeiger'
 
 pwd     = `pwd`.strip
 command = $*[0]
+query   = $*[1]
 
 case command
 when "server" ; Zeiger::Server.new.run *$*
-when "search" ; Zeiger::QueryClient.run pwd, *$*
-when "files"  ; Zeiger::FileListClient.run pwd, *$*
-when "stats"  ; Zeiger::StatsClient.run pwd, *$*
+when "search" ; Zeiger::Client.new.send({ command: :search, pwd: pwd, search: query })
+when "files"  ; Zeiger::Client.new.send({ command: :files , pwd: pwd, files: query  })
+when "stats"  ; Zeiger::Client.new.send({ command: :stats , pwd: pwd                })
 end
 
 # define file groups

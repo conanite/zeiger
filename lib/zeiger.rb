@@ -1,8 +1,6 @@
 require "set"
 require 'yaml'
-require 'zeiger/query_client'
-require 'zeiger/file_list_client'
-require 'zeiger/stats_client'
+require 'zeiger/client'
 require 'zeiger/server'
 require "zeiger/version"
 require 'zeiger/monitor'
