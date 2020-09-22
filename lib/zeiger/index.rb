@@ -75,13 +75,18 @@ module Zeiger
 
     def glob             pattern ; Dir.glob(File.join(dir, pattern))                                     ; end
     def rescan                   ; monitor.build_index                                                   ; end
-    def get_ngram_lines   ngrams ; ngrams.map { |ngram| result = index[ngram] || [] }.reduce(&:&)        ; end
+    def get_ngram_lines   ngrams ; ngrams.map { |ngram| index[ngram] || [] }.reduce(&:&)                 ; end
     def exec_query regex, ngrams ; get_ngram_lines(ngrams).select { |line| line.matches? regex }         ; end
     def sort_by_filename   lines ; lines.sort_by { |line| [line.file.local_filename, line.line_number] } ; end
+    def all_matching           q ; index.keys.select { |k| k.match q }.map { |k| index[k] }.reduce(&:|)  ; end
 
     def query txt
       puts "got query #{txt.inspect}"
-      sort_by_filename exec_query Regexp.compile(Regexp.escape txt), txt.ngrams(NGRAM_SIZE)
+      sort_by_filename(if txt.length <= NGRAM_SIZE
+                         all_matching Regexp.compile(Regexp.escape txt)
+                       else
+                         exec_query Regexp.compile(Regexp.escape txt), txt.ngrams(NGRAM_SIZE)
+                       end)
     end
 
     def file_list name
