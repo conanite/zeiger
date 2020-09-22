@@ -4,16 +4,19 @@ module Zeiger
   SOCKET_NAME = "/tmp/zeiger-index"
 
   class Server
-    def run command, *args
+    def run command, sleepytime=nil, *args
+      sleepytime = (sleepytime || 10).to_f
+      raise "sleep time must be greater than zero, got #{sleepytime.inspect}" unless sleepytime > 0.0
+      puts "starting server with sleep interval of #{sleepytime} seconds"
       Thread.new do
         begin
           while true do
             indices = Zeiger::INDICES.values
             indices.each do |index|
-              puts "scanning #{index.name} at #{index.dir}"
+              puts "#{Time.now} scanning #{index.name} at #{index.dir}"
               index.rescan
             end
-            sleep 10
+            sleep sleepytime
           end
         rescue Exception => e
           puts e.message
