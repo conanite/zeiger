@@ -32,15 +32,21 @@ module Zeiger
           puts incoming.to_yaml
 
           index = Index.from_path incoming[:pwd]
-          puts "querying index #{index.name}"
 
-          case incoming[:command]
-          when :search
-            index.query(incoming[:search]).each { |res| sock.puts res.to_s }
-          when :stats
-            sock.puts index.stats.stats.to_yaml
-          when :files
-            index.file_list(incoming[:files]).each { |f| sock.puts f.local_filename }
+          if index
+            puts "querying index #{index.name}"
+
+            case incoming[:command]
+            when :search
+              index.query(incoming[:search]).each { |res| sock.puts res.to_s }
+            when :stats
+              sock.puts index.stats.stats.to_yaml
+            when :files
+              index.file_list(incoming[:files]).each { |f| sock.puts f.local_filename }
+            end
+
+          else
+            puts "no index found for path #{incoming[:pwd].inspect}"
           end
 
         ensure
