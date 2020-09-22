@@ -12,6 +12,7 @@ when "server" ; Zeiger::Server.new.run *$*
 when "search" ; Zeiger::Client.new.send({ command: :search, pwd: pwd, search: query })
 when "files"  ; Zeiger::Client.new.send({ command: :files , pwd: pwd, files: query  })
 when "stats"  ; Zeiger::Client.new.send({ command: :stats , pwd: pwd                })
+else puts "Zeiger version #{Zeiger::VERSION}, usage `zeiger server|search|files|stats`"
 end
 
 # define file groups
