@@ -2,7 +2,19 @@ module Zeiger
   INDICES = { }
 
   class Index
-    ROOT_FILES = %w{ .zeiger.yml .git .hg Makefile Rakefile Gemfile build.xml }
+    ROOT_GLOBS  = [%w{ *.gemspec       }]
+    ROOT_GROUPS = [%w{ .zeiger.yml     },
+                   %w{ .git            },
+                   %w{ .hg             },
+                   %w{ Makefile        },
+                   %w{ Rakefile        },
+                   %w{ Gemfile         },
+                   %w{ build.xml       },
+                   %w{ lib LICENSE     },
+                   %w{ lib spec        },
+                   %w{ lib MIT-LICENSE },
+                   %w{ lib README.md   },
+                  ]
     NGRAM_SIZE = 3
 
     attr_accessor :index, :dir, :name, :includes, :ignore, :files, :config, :monitor, :stats
@@ -33,7 +45,8 @@ module Zeiger
       raise "no path! #{path.inspect}" if path == nil || path.strip == ''
       return INDICES[path] if INDICES[path]
       return nil if path == '/'
-      return (INDICES[path] = new(path)) if ROOT_FILES.any? { |f| File.exist?(File.join path, f) }
+      return (INDICES[path] = new(path)) if ROOT_GROUPS.any? { |rg| rg.all? { |f| File.exist?(File.join path, f)       } }
+      return (INDICES[path] = new(path)) if ROOT_GLOBS.any?  { |rg| rg.all? { |f| Dir.glob(File.join path, f).size > 0 } }
       return from_path(File.dirname path)
     end
 
