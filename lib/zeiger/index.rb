@@ -93,7 +93,7 @@ module Zeiger
 
       lines = if (txt.strip.to_s == '')
                 puts "empty query, not searching!"
-                return []
+                []
               elsif txt.length <= NGRAM_SIZE
                 all_matching Regexp.compile(Regexp.escape txt)
               else
