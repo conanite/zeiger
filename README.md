@@ -50,6 +50,7 @@ ignore:
   - .gif$
   - .zip$
   - .jpg$
+  - .ico$
   - .xcf$
   - .mpg$
 ```
@@ -60,6 +61,9 @@ When you invoke `zeiger search ...` or `zeiger files ...`, zeiger will consider 
 
 Zeiger considers a project root any directory containing any one of the following: `%w{ .zeiger.yml .git .hg Makefile Rakefile Gemfile build.xml }` (see `ROOT_FILES` constant in `index.rb`)
 
+## TODO
+
+Use `Listen` gem instead of manual filesystem scan
 
 ## Contributing
 
