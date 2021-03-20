@@ -71,6 +71,14 @@ module Zeiger
       }
 
       puts "#{info.summary} : re-index"
+    rescue Exception => e
+      puts "Not able to read #{file}"
+      while e
+        puts e.message
+        puts e.backtrace.join("\n")
+        puts
+        e = e.cause
+      end
     end
 
     def glob             pattern ; Dir.glob(File.join(dir, pattern))                                     ; end
