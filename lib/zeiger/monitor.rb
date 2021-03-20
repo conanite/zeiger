@@ -5,7 +5,7 @@ module Zeiger
     def initialize dir, index, attrs
       @dir, @index, @stat = dir, index, Hash.new
       @includes = attrs["search"] || %w{ app/**/* bin/**/* config/**/* lib/**/* spec/**/* test/**/* }
-      @ignore   = attrs["ignore"] || %w{ .gz$ .png$ .jpg$ .pdf$ }
+      @ignore   = attrs["ignore"] || %w{ .gz$ .png$ .jpg$ .pdf$ .ico$ }
     end
 
     def ignore? filename
