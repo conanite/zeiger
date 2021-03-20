@@ -90,11 +90,17 @@ module Zeiger
 
     def query txt
       puts "got query #{txt.inspect}"
-      sort_by_filename(if txt.length <= NGRAM_SIZE
-                         all_matching Regexp.compile(Regexp.escape txt)
-                       else
-                         exec_query Regexp.compile(Regexp.escape txt), txt.ngrams(NGRAM_SIZE)
-                       end)
+
+      lines = if (txt.strip.to_s == '')
+                puts "empty query, not searching!"
+                return []
+              elsif txt.length <= NGRAM_SIZE
+                all_matching Regexp.compile(Regexp.escape txt)
+              else
+                exec_query Regexp.compile(Regexp.escape txt), txt.ngrams(NGRAM_SIZE)
+              end
+
+      sort_by_filename(lines)
     end
 
     def file_list name
