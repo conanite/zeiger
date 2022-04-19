@@ -37,6 +37,7 @@ module Zeiger
         puts "reading config from #{conf_file.inspect}"
         YAML.load(File.read conf_file)
       else
+        puts "config file #{conf_file.inspect} not found"
         { }
       end
     end
