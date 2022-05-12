@@ -5,6 +5,8 @@ module Zeiger
 
   class Server
     def run command, sleepytime=nil, *args
+      db  = setup_db
+
       sleepytime = (sleepytime || 10).to_f
       raise "sleep time must be greater than zero, got #{sleepytime.inspect}" unless sleepytime > 0.0
       puts "starting server with sleep interval of #{sleepytime} seconds"
@@ -14,7 +16,7 @@ module Zeiger
             indices = Zeiger::INDICES.values
             indices.each do |index|
               puts "#{Time.now} scanning #{index.name} at #{index.dir}"
-              index.rescan
+              sem.synchronize { index.rescan db }
             end
             sleep sleepytime
           end

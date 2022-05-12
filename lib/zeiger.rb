@@ -1,3 +1,4 @@
+require "sqlite3"
 require "set"
 require 'yaml'
 require 'zeiger/client'

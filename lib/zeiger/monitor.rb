@@ -16,7 +16,7 @@ module Zeiger
       stat.include?(filename) && stat[filename] == mtime
     end
 
-    def build_index
+    def build_index db
       started = Time.now
       files = Set.new
       includes.each do |inc|

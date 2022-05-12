@@ -82,7 +82,7 @@ module Zeiger
     end
 
     def glob             pattern ; Dir.glob(File.join(dir, pattern))                                     ; end
-    def rescan                   ; monitor.build_index                                                   ; end
+    def rescan                db ; monitor.build_index(db)                                               ; end
     def get_ngram_lines   ngrams ; ngrams.map { |ngram| index[ngram] || [] }.reduce(&:&)                 ; end
     def exec_query regex, ngrams ; get_ngram_lines(ngrams).select { |line| line.matches? regex }         ; end
     def sort_by_filename   lines ; lines.sort_by { |line| [line.file.local_filename, line.line_number] } ; end
