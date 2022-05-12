@@ -1,4 +1,4 @@
-# Zeiger
+# &#x261E; Zeiger
 
 Zeiger is the German word for "pointer", "indicator", "index", "locator". This gem is built in the "index" sense. To install,
 
@@ -23,7 +23,7 @@ zeiger search "muppets"
 
 Zeiger will index the current directory if it is not already indexed, then search for lines containing "muppets". Output is in the same format as `grep` (so you can hook it up with your emacs for quick project browsing).
 
-Zeiger will rescan files in the current directory every ten seconds so the index is mostly up-to-date.
+Zeiger will rescan files in the current directory every ten seconds (configurable) so the index is mostly up-to-date.
 
 
 
